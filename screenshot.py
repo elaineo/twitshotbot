@@ -1,10 +1,7 @@
-# -*- coding: utf-8 -*-
-from PIL import Image
-from TwitterAPI import TwitterAPI
-
 import imgkit
-import urllib
+import urllib.request
 from bs4 import BeautifulSoup
+import sys, logging, traceback
 
 def screenshot(twit_url, twit_id):
 	try:
@@ -25,5 +22,6 @@ def screenshot(twit_url, twit_id):
 		imgfile = twit_id + '.png'
 		imgkit.from_string(str(head) + str(tweet), imgfile, options=options)
 	except Exception as e:
+		logging.debug(traceback.format_exception(*sys.exc_info()))
 		return str(e)
 	return imgfile
