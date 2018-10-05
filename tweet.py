@@ -2,6 +2,7 @@ from TwitterAPI import TwitterAPI
 import json
 import logging
 from screenshot import screenshot
+import threading
 
 class TweetClient:
     """ Twitter Client
@@ -48,9 +49,10 @@ class TweetClient:
             logging.info("Media upload failed: %s" % file)
             self.post('Error', reply_sid)
 
-    def send_receipt(self, memo):
+    def _send_receipt(self, memo):
         id_str = memo.split('#')[-1]
         file = id_str + '.png'
+        logging.info(file)
         self._return_image(file, id_str)
 
     def watch(self):  
@@ -70,3 +72,22 @@ class TweetClient:
             logging.info(r)
             screenshot(tweet_url.get('expanded_url'), sid)
             continue
+
+    def get_invoices(self):
+        invoices = self.lnrpc.subscribe_invoices()
+        for invoice in invoices:
+            logging.info(invoice)
+            if invoice.settled:
+                self._send_receipt(invoice.memo)
+
+    def dummy(self):
+        while True:
+            b = input("Input Please: ")
+            d = threading.Thread(target=self._send_receipt, args=(b,))
+            d.start()
+
+    def go(self):
+        thread1 = threading.Thread(target=self.watch)
+        thread2 = threading.Thread(target=self.dummy)
+        thread1.start()
+        thread2.start()
