@@ -12,6 +12,10 @@ def main():
 
     tweet = TweetClient(cfg.twitter, ln)
     tweet.watch()
+    invoices = ln.subscribe_invoices()
+    for invoice in invoices:
+    	logging.info(invoice)
+    	tweet.send_receipt(invoice.get('memo'))
 
 if __name__ == "__main__":
     main()
