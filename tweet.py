@@ -79,14 +79,8 @@ class TweetClient:
             if invoice.settled:
                 self._send_receipt(invoice.memo)
 
-    def dummy(self):
-        while True:
-            b = input("Input Please: ")
-            d = threading.Thread(target=self._send_receipt, args=(b,))
-            d.start()
-
     def go(self):
-        thread1 = threading.Thread(target=self.watch)
-        thread2 = threading.Thread(target=self.dummy)
-        thread1.start()
-        thread2.start()
+        watch = threading.Thread(target=self.watch)
+        get_invoices = threading.Thread(target=self.get_invoices)
+        watch.start()
+        get_invoices.start()
