@@ -7,7 +7,7 @@ import os, logging
 def main():
     logging.basicConfig(level=logging.INFO)
 
-    cert = open(os.path.expanduser(cfg.LND_CERT_PATH)).read()
+    cert = open(os.path.expanduser(cfg.LND_CERT_PATH), 'rb').read()
     ln = LndWrapper(cert, cfg)
 
     tweet = TweetClient(cfg.twitter, ln)
