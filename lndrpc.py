@@ -16,6 +16,12 @@ class LndWrapper:
         creds = grpc.ssl_channel_credentials(cert)
         channel = grpc.secure_channel(config.LND_HOST, creds)
         self.stub = lnrpc.LightningStub(channel)
+        try:
+            request = ln.GetInfoRequest()
+            response = self.stub.GetInfo(request)
+            logging.info(response)
+        except grpc.RpcError as e:
+           logging.error(e)    
 
     def get_invoice(self, memo):
         try:
