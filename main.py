@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 
 from tweet import TweetClient
-import config as cfg
-
 from lndrpc import LndWrapper
+import config as cfg
 import os, logging
 
 def main():
@@ -13,11 +12,7 @@ def main():
     ln = LndWrapper(cert, cfg)
 
     tweet = TweetClient(cfg.twitter, ln)
-    tweet.watch()
-    invoices = ln.subscribe_invoices()
-    for invoice in invoices:
-    	logging.info(invoice)
-    	tweet.send_receipt(invoice.get('memo'))
+    tweet.go()
 
 if __name__ == "__main__":
     main()
