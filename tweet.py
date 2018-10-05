@@ -44,15 +44,14 @@ class TweetClient:
         logging.info(r.json())
         if r.status_code == 200:
             media_id = r.json()['media_id']
-            self.post('Thank you', reply_sid, media_id)
+            self._post('Thank you', reply_sid, media_id)
         else:
             logging.info("Media upload failed: %s" % file)
-            self.post('Error', reply_sid)
+            self._post('Error', reply_sid)
 
     def _send_receipt(self, memo):
         id_str = memo.split('#')[-1]
         file = id_str + '.png'
-        logging.info(file)
         self._return_image(file, id_str)
 
     def watch(self):  
