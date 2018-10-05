@@ -1,1 +1,1 @@
-# twitshotbot
+# Twitter Screenshot Bot
