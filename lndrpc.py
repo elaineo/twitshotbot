@@ -16,6 +16,7 @@ class LndWrapper:
         creds = grpc.ssl_channel_credentials(cert)
         channel = grpc.secure_channel(config.LND_HOST, creds)
         self.stub = lnrpc.LightningStub(channel)
+        self.DEFAULT_PRICE = config.DEFAULT_PRICE
         try:
             request = ln.GetInfoRequest()
             response = self.stub.GetInfo(request)
@@ -27,7 +28,7 @@ class LndWrapper:
         try:
             request = ln.Invoice(
                 memo=memo,
-                value=config.DEFAULT_PRICE
+                value=self.DEFAULT_PRICE
             )
             response = self.stub.AddInvoice(request)
             logging.info(response)
