@@ -1,6 +1,7 @@
 from TwitterAPI import TwitterAPI
 import json
 import logging
+from screenshot import screenshot
 
 class TweetClient:
     """ Twitter Client
@@ -31,7 +32,8 @@ class TweetClient:
         return tweet.get('id_str')
 
     def _send_invoice(self, reply_sid):
-        msg = self.lnrpc.get_invoice(amount, reply_sid)
+        memo = "ScreenshotBot #%s" % reply_sid 
+        msg = self.lnrpc.get_invoice(memo)
         sid = self._post(msg, reply_sid)
         return sid
 
@@ -46,6 +48,11 @@ class TweetClient:
             logging.info("Media upload failed: %s" % file)
             self.post('Error', reply_sid)
 
+    def send_receipt(self, memo):
+        id_str = memo.split('#')[-1]
+        file = id_str + '.png'
+        self._return_image(file, id_str)
+
     def watch(self):  
         """
         Filter tweets based on bot's screen name
@@ -54,9 +61,12 @@ class TweetClient:
 
         for m in msgs:
             logging.info(m)
-            tweet = m.get('entities').get('urls')
-            tweet_url = tweet[0]
+            urls = m.get('entities').get('urls')
+            if len(urls)==0:
+                continue
+            tweet_url = urls[0]
             sid = m.get('id_str')
-            r = self._send_invoice(tweet)
+            r = self._send_invoice(sid)
             logging.info(r)
+            screenshot(tweet_url.get('expanded_url'), sid)
             continue
