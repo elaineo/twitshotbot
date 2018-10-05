@@ -40,7 +40,7 @@ class LndWrapper:
     def subscribe_invoices(self):
         try:
             request = ln.InvoiceSubscription()
-            return stub.SubscribeInvoices(request)
+            return self.stub.SubscribeInvoices(request)
         except grpc.RpcError as e:
            logging.error(e)
            return e.details()    
