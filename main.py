@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from tweet import TweetClient
 import config as cfg
 
