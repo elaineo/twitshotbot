@@ -70,7 +70,7 @@ class TweetClient:
             sid = m.get('id_str')
             r = self._send_invoice(sid)
             logging.info(r)
-            screenshot(tweet_url.get('expanded_url'), '%-%' % (sid, r))
+            screenshot(tweet_url.get('expanded_url'), '%s-%s' % (sid, r))
             continue
 
     def get_invoices(self):
