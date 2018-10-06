@@ -44,7 +44,7 @@ class TweetClient:
         logging.info(r.json())
         if r.status_code == 200:
             media_id = r.json()['media_id']
-            self._post('Thank you', reply_sid, media_id)
+            self._post('Here you go:', reply_sid, media_id)
         else:
             logging.info("Media upload failed: %s" % file)
             self._post('Error', reply_sid)
