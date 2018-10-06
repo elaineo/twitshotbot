@@ -2,7 +2,7 @@ from TwitterAPI import TwitterAPI
 import json
 import logging
 from screenshot import screenshot
-import threading
+import threading, glob
 
 class TweetClient:
     """ Twitter Client
@@ -51,8 +51,9 @@ class TweetClient:
 
     def _send_receipt(self, memo):
         id_str = memo.split('#')[-1]
-        file = id_str + '.png'
-        self._return_image(file, id_str)
+        file = glob.glob('%s-*.png' % id_str)[0]
+        reply_sid = file[file.find('-')+1 : file.find('.')]
+        self._return_image(file, reply_sid)
 
     def watch(self):  
         """
@@ -69,7 +70,7 @@ class TweetClient:
             sid = m.get('id_str')
             r = self._send_invoice(sid)
             logging.info(r)
-            screenshot(tweet_url.get('expanded_url'), r)
+            screenshot(tweet_url.get('expanded_url'), '%-%' % (sid, r))
             continue
 
     def get_invoices(self):
