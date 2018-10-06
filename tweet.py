@@ -27,7 +27,7 @@ class TweetClient:
         options = { 'status': msg, 
                     'in_reply_to_status_id': reply_sid, 
                     'auto_populate_reply_metadata': True,
-                    'media_id': media_id }
+                    'media_ids': media_id }
         tweet = self.api.request('statuses/update', options).json()
         logging.info(tweet)
         return tweet.get('id_str')
