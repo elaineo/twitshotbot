@@ -7,11 +7,14 @@ def screenshot(twit_url, twit_id):
 	try:
 		f = urllib.request.urlopen(twit_url) 
 		page = BeautifulSoup(f, 'html.parser')
-		head = page.head
 		tweet = page.find("div", class_="permalink-tweet")
-
-		css_hack = BeautifulSoup("<style>.icon { background: transparent }</style>", "html.parser")
-		head.append(css_hack)
+		if not tweet:
+			target = str(page)
+		else: 
+			head = page.head
+			css_hack = BeautifulSoup("<style>.icon { background: transparent }</style>", "html.parser")
+			head.append(css_hack)
+			target = str(head) + str(tweet)
 
 		options = {
 		    'encoding': "UTF-8",
@@ -20,7 +23,7 @@ def screenshot(twit_url, twit_id):
 		}
 
 		imgfile = twit_id + '.png'
-		imgkit.from_string(str(head) + str(tweet), imgfile, options=options)
+		imgkit.from_string(target, imgfile, options=options)
 	except Exception as e:
 		logging.debug(traceback.format_exception(*sys.exc_info()))
 		return str(e)
