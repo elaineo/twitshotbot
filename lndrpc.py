@@ -1,5 +1,6 @@
 import logging
-import sys
+import codecs
+import sys, os
 sys.path.insert(0, 'googleapis')
 
 import rpc_pb2 as ln
@@ -8,12 +9,20 @@ import grpc
 
 from google.protobuf.json_format import MessageToJson
 
+def metadata_callback(context, callback):
+    with open(os.path.expanduser('~/.lnd/data/chain/bitcoin/mainnet/invoice.macaroon'), 'rb') as f:
+        macaroon_bytes = f.read()
+        macaroon = codecs.encode(macaroon_bytes, 'hex')
+    callback([('macaroon', macaroon)], None)
 
 class LndWrapper:
     """API for Lightning gRPC client
     """
     def __init__(self, cert, config):
-        creds = grpc.ssl_channel_credentials(cert)
+        cert_creds = grpc.ssl_channel_credentials(cert)
+        auth_creds = grpc.metadata_call_credentials(metadata_callback)
+        creds = grpc.composite_channel_credentials(cert_creds, auth_creds)
+
         channel = grpc.secure_channel(config.LND_HOST, creds)
         self.stub = lnrpc.LightningStub(channel)
         self.DEFAULT_PRICE = config.DEFAULT_PRICE
