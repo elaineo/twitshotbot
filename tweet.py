@@ -83,7 +83,5 @@ class TweetClient:
     def go(self):
         watch = threading.Thread(target=self.watch)
         get_invoices = threading.Thread(target=self.get_invoices)
-        watch.daemon = True
-        get_invoices.daemon = True
         watch.start()
         get_invoices.start()
