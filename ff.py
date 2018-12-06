@@ -50,6 +50,7 @@ def sav_favs(api, user, key, reply_id):
         top = [t[0] for t in top]
         friends_raw = api.request('users/lookup', {'user_id': top}) 
         friends = json.loads(friends_raw.response.text)
+        logging.info(friends)
         ff[user] = { "favs": [f["screen_name"] for f in friends],
                     "key": key,
                     "reply_id": reply_id }

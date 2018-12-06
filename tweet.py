@@ -83,7 +83,7 @@ class TweetClient:
                 r = self._send_invoice(sid, "Screenshot")
                 logging.info(r)
                 screenshot(tweet_url.get('expanded_url'), '%s-%s' % (sid, r))
-            elif len(ppl)>0:
+            elif len(ppl)>1:
                 person = ppl[-1]["screen_name"]
                 r = self._send_invoice(sid, person)
                 logging.info(r)
