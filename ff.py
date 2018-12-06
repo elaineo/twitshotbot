@@ -59,7 +59,7 @@ def sav_favs(api, user, key, reply_id):
         file.truncate()
         return
 
-def get_favs(user, id_str):
+def get_favs(user):
     with open('data/ff.json', 'r+') as file:
         ff = json.load(file)
         if user in ff:
