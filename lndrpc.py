@@ -10,7 +10,7 @@ import grpc
 from google.protobuf.json_format import MessageToJson
 
 def metadata_callback(context, callback):
-    with open(os.path.expanduser('~/.lnd/data/chain/bitcoin/testnet/invoice.macaroon'), 'rb') as f:
+    with open(os.path.expanduser('~/.lnd/data/chain/bitcoin/testnet/admin.macaroon'), 'rb') as f:
         macaroon_bytes = f.read()
         macaroon = codecs.encode(macaroon_bytes, 'hex')
     callback([('macaroon', macaroon)], None)
