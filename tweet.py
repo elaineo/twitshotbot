@@ -29,11 +29,9 @@ class TweetClient:
                     'in_reply_to_status_id': reply_sid, 
                     'auto_populate_reply_metadata': True,
                     'media_ids': media_id }
-        # tweet = self.api.request('statuses/update', options).json()
-        # logging.info(tweet)
-        # return tweet.get('id_str')
-        logging.info(msg)
-        return "test1234"
+        tweet = self.api.request('statuses/update', options).json()
+        logging.info(tweet)
+        return tweet.get('id_str')
 
     def _send_invoice(self, reply_sid, command="Screenshot"):
         memo = "%sBot #%s" % (command, reply_sid)
@@ -53,7 +51,7 @@ class TweetClient:
             self._post('Error', reply_sid)
 
     def _return_favs(self, user, favs, reply_sid):
-        fav_string = favs.join("\n@")
+        fav_string = "\n@".join(favs)
         self._post("@%s's top Like recipients: \n@%s" % (user, fav_string), reply_sid)
 
     def _send_receipt(self, memo): 
