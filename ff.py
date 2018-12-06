@@ -63,5 +63,5 @@ def get_favs(user, id_str):
     with open('data/ff.json', 'r+') as file:
         ff = json.load(file)
         if user in ff:
-            return ff[user]["favs"], ff[user]["reply_id"]
+            return ff[user]["favs"][:10], ff[user]["reply_id"]
         logging.error("Missing user %s" % user)

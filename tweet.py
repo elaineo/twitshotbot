@@ -32,6 +32,7 @@ class TweetClient:
         # tweet = self.api.request('statuses/update', options).json()
         # logging.info(tweet)
         # return tweet.get('id_str')
+        logging.info(msg)
         return "test1234"
 
     def _send_invoice(self, reply_sid, command="Screenshot"):
