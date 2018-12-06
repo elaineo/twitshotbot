@@ -15,9 +15,8 @@ def sav_favs(api, user, key, reply_id):
         ff = json.load(file)
 
         if user in ff:
-            ff[user] = { "favs": ff[user]["favs"],
-                        "key": key,
-                        "reply_id": reply_id }
+            ff[user]["key"] = key
+            ff[user]["reply_id"] = reply_id 
             file.seek(0)
             json.dump(ff, file)
             file.truncate()
@@ -63,5 +62,5 @@ def get_favs(user, id_str):
     with open('data/ff.json', 'r+') as file:
         ff = json.load(file)
         if user in ff:
-            return ff[user]["favs"]
+            return ff[user]["favs"], ff[user]["reply_id"]
         logging.error("Missing user %s" % user)

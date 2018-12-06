@@ -2,6 +2,7 @@ from TwitterAPI import TwitterAPI
 import json
 import logging
 from screenshot import screenshot
+from ff import sav_favs, get_favs
 import threading, glob
 
 class TweetClient:
@@ -28,12 +29,13 @@ class TweetClient:
                     'in_reply_to_status_id': reply_sid, 
                     'auto_populate_reply_metadata': True,
                     'media_ids': media_id }
-        tweet = self.api.request('statuses/update', options).json()
-        logging.info(tweet)
-        return tweet.get('id_str')
+        # tweet = self.api.request('statuses/update', options).json()
+        # logging.info(tweet)
+        # return tweet.get('id_str')
+        return "test1234"
 
-    def _send_invoice(self, reply_sid):
-        memo = "ScreenshotBot #%s" % reply_sid 
+    def _send_invoice(self, reply_sid, command="Screenshot"):
+        memo = "%sBot #%s" % (command, reply_sid)
         msg = self.lnrpc.get_invoice(memo)
         sid = self._post(msg, reply_sid)
         return sid
@@ -49,11 +51,21 @@ class TweetClient:
             logging.info("Media upload failed: %s" % file)
             self._post('Error', reply_sid)
 
-    def _send_receipt(self, memo):
-        id_str = memo.split('#')[-1]
-        file = glob.glob('%s-*.png' % id_str)[0]
-        reply_sid = file[file.find('-')+1 : file.find('.')]
-        self._return_image(file, reply_sid)
+    def _return_favs(self, user, favs, reply_sid):
+        fav_string = favs.join("\n@")
+        self._post("@%s's top Like recipients: \n@%s" % (user, fav_string), reply_sid)
+
+    def _send_receipt(self, memo): 
+        [command, id_str] = memo.split('Bot #')
+        if "Screenshot" in command:
+            file = glob.glob('%s-*.png' % id_str)[0]
+            reply_sid = file[file.find('-')+1 : file.find('.')]
+            self._return_image(file, reply_sid)
+        else:
+            favs, reply_sid = get_favs(command)
+            if favs and reply_sid:
+                self._return_favs(command, favs, reply_sid)
+
 
     def watch(self):  
         """
@@ -64,13 +76,18 @@ class TweetClient:
         for m in msgs:
             logging.info(m)
             urls = m.get('entities').get('urls')
-            if len(urls)==0:
-                continue
-            tweet_url = urls[0]
+            ppl = m.get('entities').get('user_mentions')
             sid = m.get('id_str')
-            r = self._send_invoice(sid)
-            logging.info(r)
-            screenshot(tweet_url.get('expanded_url'), '%s-%s' % (sid, r))
+            if len(urls)>0:
+                tweet_url = urls[0]
+                r = self._send_invoice(sid, "Screenshot")
+                logging.info(r)
+                screenshot(tweet_url.get('expanded_url'), '%s-%s' % (sid, r))
+            elif len(ppl)>0:
+                person = ppl[-1]["screen_name"]
+                r = self._send_invoice(sid, person)
+                logging.info(r)
+                sav_favs(self.api, person, sid, r)                
             continue
 
     def get_invoices(self):
