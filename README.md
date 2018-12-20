@@ -1,1 +1,1 @@
-# Twitter Screenshot Bot
+# Lightning-Payable Twitter Screenshot Bot
