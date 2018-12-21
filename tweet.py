@@ -68,7 +68,7 @@ class TweetClient:
                     urls = m.get('entities').get('urls')
                     if len(urls)==0:
                         continue
-                    tweet_url = urls[0]
+                    tweet_url = urls[-1]
                     sid = m.get('id_str')
                     r = self._send_invoice(sid)
                     logging.info(r)
