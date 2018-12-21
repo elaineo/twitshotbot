@@ -59,19 +59,27 @@ class TweetClient:
         """
         Filter tweets based on bot's screen name
         """
-        msgs = self.api.request('statuses/filter', { 'track': self.bot.get('screen_name') })
+        while True:
+            try:
+                msgs = self.api.request('statuses/filter', { 'track': self.bot.get('screen_name') })
 
-        for m in msgs:
-            logging.info(m)
-            urls = m.get('entities').get('urls')
-            if len(urls)==0:
-                continue
-            tweet_url = urls[0]
-            sid = m.get('id_str')
-            r = self._send_invoice(sid)
-            logging.info(r)
-            screenshot(tweet_url.get('expanded_url'), '%s-%s' % (sid, r))
-            continue
+                for m in msgs:
+                    logging.info(m)
+                    urls = m.get('entities').get('urls')
+                    if len(urls)==0:
+                        continue
+                    tweet_url = urls[0]
+                    sid = m.get('id_str')
+                    r = self._send_invoice(sid)
+                    logging.info(r)
+                    screenshot(tweet_url.get('expanded_url'), '%s-%s' % (sid, r))
+                    continue
+            except TwitterAPI.TwitterError as e:
+                logging.warning("Twitter Error: %s" % e)
+            else:
+                logging.error("Failure while watching stream")
+                break
+
 
     def get_invoices(self):
         invoices = self.lnrpc.subscribe_invoices()
